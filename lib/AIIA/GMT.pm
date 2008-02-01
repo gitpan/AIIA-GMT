@@ -27,7 +27,7 @@ our @EXPORT = qw(_pmid2entities _txt2entities
 	
 );
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 require XSLoader;
 XSLoader::load('AIIA::GMT', $VERSION);
@@ -114,11 +114,13 @@ http://aiia.iis.sinca.edu.tw/biocreative2.htm
 
 =head1 AUTHOR
 
-Cheng-Ju Kuo, E<lt>cju.kuo@gmail.com<gt>>
+Cheng-Ju Kuo, E<lt>cju.kuo@gmail.com<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2008 by Cheng-Ju Kuo
+
+Copyright (c) 2008 by Cheng-Ju Kuo and the Institute of Information
+Science, Academia Sinica, Taipei, Taiwan.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,
