@@ -17,17 +17,13 @@ our @ISA = qw(Exporter);
 # This allows declaration	use AIIA::GMT ':all';
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(_pmid2entites _txt2entities
-	
-) ] );
+our %EXPORT_TAGS = ( 'all' => [ qw(pmid2entity text2entity) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
-our @EXPORT = qw(_pmid2entities _txt2entities
-	
-);
+our @EXPORT = qw(pmid2entity text2entity);
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 require XSLoader;
 XSLoader::load('AIIA::GMT', $VERSION);
@@ -35,20 +31,20 @@ XSLoader::load('AIIA::GMT', $VERSION);
 # Preloaded methods go here.
 
 # Autoload methods go after =cut, and are processed by the autosplit program.
-my $SERVER_URL = 'http://140.109.23.113:8080/XmlRpcServlet';
+my $SERVER_URL = 'http://bcsp1.iis.sinica.edu.tw:8080/aiiagmt/XmlRpcServlet';
 
-sub _pmid2entities {
+sub pmid2entity {
     my $id = shift;
-    die "Usage: &_pmid2entities(\'pubmed id\');\n" if ($id != /^\d+$/);
+    die "Usage: &pmid2entity(\'PubMed Article ID\');\n" if ($id != /^\d+$/);
     return &submit($id);
 }
 
-sub _txt2entities {
+sub text2entity {
     my $txt = shift;
     $txt =~ s/\n//g;
     my $num;
     map {$num++;} split(/\s/, $txt);
-    die "Usage: &_txt2entities(\'< 3000 words\');\n" if ($num > 3000);
+    die "Usage: &text2entity(\'less than 3000 words\');\n" if ($num > 3000);
     return &submit($txt);
 }
 
@@ -57,8 +53,7 @@ sub submit {
     my $client = Frontier::Client->new(url => $SERVER_URL, debug => 0);
     my $ret = $client->call('Annotator.getAnnotation', @args);
     my @rep;
-    map {push @rep, $_->{'offset'} . "\t" . $_->{'mention'};} 
-        @{$ret->{'mentions'}};
+    map {push @rep, $_->{'offset'} . "\t" . $_->{'mention'};} @{$ret->{'mentions'}};
     @rep = sort @rep;
     return \@rep;
 }
@@ -76,7 +71,7 @@ AIIA::GMT - a XML-RPC client of a web-service server, AIIA gene mention tagger, 
  use YAML;
  use AIIA::GMT;
 
- $result = _txt2entities('< 3000 words');
+ $result = &text2entity('less than 3000 words');
  print Dump $result;
 
 
@@ -92,12 +87,17 @@ This module is developed to help those who want to use this remote service with 
 
 =over 4
 
-=item _txt2entities( '< 3000 words' );
+=item text2entity('less than 3000 words');
 
 Return a ARRAY reference which contains all of the entities recognized from your input with its position information, for example: '20 seperated-by-tab human protein-tyrosine-phosphatase'.
 
 =back
 
+=item pmid2entity('PubMed Article ID');
+
+Return a ARRAY reference which contains all of the entities recognized from your input with its position information, for example: '20 seperated-by-tab human protein-tyrosine-phosphatase'.
+
+=back
 
 =head1 REQUIREMENT
 
@@ -114,7 +114,8 @@ http://aiia.iis.sinca.edu.tw/biocreative2.htm
 
 =head1 AUTHOR
 
-Cheng-Ju Kuo, E<lt>cju.kuo@gmail.com<gt>
+Cheng-Ju Kuo
+cju.kuo@gmail.com
 
 =head1 COPYRIGHT AND LICENSE
 
