@@ -23,7 +23,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw(pmid2entity text2entity);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 require XSLoader;
 XSLoader::load('AIIA::GMT', $VERSION);
@@ -35,7 +35,7 @@ my $SERVER_URL = 'http://bcsp1.iis.sinica.edu.tw:8080/aiiagmt/XmlRpcServlet';
 
 sub pmid2entity {
     my $id = shift;
-    die "Usage: &pmid2entity(\'PubMed Article ID\');\n" if ($id != /^\d+$/);
+    die "Usage: &pmid2entity(\'PubMed Article ID\');\n" if ($id !~ /^\d+$/);
     return &submit($id);
 }
 
